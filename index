@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Chris (thechrisxc)">
+    <title>Bangkok Birthday Journey</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Cinzel:wght@400;700;600&family=Lato:wght@300;400;700;900&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --bg-color: #FDFBF7;
+            --text-primary: #2C3E50;
+            --text-secondary: #7F8C8D;
+            --accent-pink: #E6B8B8;
+            --accent-green: #B8C7B8;
+            --accent-gold: #D4AF37;
+            
+            --font-heading: 'Cinzel', serif; 
+            --font-body: 'Lato', sans-serif;
+            --font-hand: 'Caveat', cursive;
+            --font-mono: 'Roboto Mono', monospace; 
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: var(--font-body);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        .watercolor-bg { position: fixed; border-radius: 50%; filter: blur(60px); z-index: -1; opacity: 0.6; pointer-events: none; }
+        .blob-1 { width: 400px; height: 400px; background: radial-gradient(circle, var(--accent-pink), transparent); top: -100px; left: -100px; animation: float 10s infinite alternate; }
+        .blob-2 { width: 300px; height: 300px; background: radial-gradient(circle, var(--accent-green), transparent); bottom: 10%; right: -50px; animation: float 8s infinite alternate-reverse; }
+        @keyframes float { from { transform: translate(0, 0); } to { transform: translate(20px, 20px); } }
+
+        .app-container { max-width: 900px; margin: 0 auto; padding: 40px 24px; position: relative; }
+        .main-title { font-family: var(--font-heading); font-size: 2.5rem; line-height: 1.2; color: var(--text-primary); font-weight: 700; margin-bottom: 5px; text-align: center; }
+        .sub-title { font-family: var(--font-hand); font-size: 2rem; color: var(--text-secondary); font-weight: 400; text-align: center; margin-bottom: 10px; }
+        .trip-details { text-align: center; font-size: 0.9rem; font-family: var(--font-mono); color: var(--text-secondary); margin-bottom: 30px; letter-spacing: 1px; }
+        .divider-line { width: 50px; height: 3px; background-color: var(--accent-pink); margin: 0 auto 40px auto; }
+
+        /* Tabs */
+        .tab-btn { font-family: var(--font-heading); font-weight: 700; letter-spacing: 1px; padding: 10px 15px; border-bottom: 2px solid transparent; transition: all 0.3s; cursor: pointer; text-align: center; white-space: nowrap; }
+        .tab-btn.active { color: var(--text-primary); border-bottom-color: var(--accent-gold); }
+        .tab-btn:not(.active) { color: #a0aec0; }
+        .tab-btn:hover:not(.active) { color: var(--text-secondary); }
+        
+        .tabs-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; flex-wrap: wrap; }
+
+        /* Cards */
+        .card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(5px); padding: 24px; border-radius: 4px; box-shadow: 2px 4px 15px rgba(0,0,0,0.03); border-left: 4px solid var(--accent-green); transition: transform 0.2s, box-shadow 0.2s; margin-bottom: 20px; position: relative; }
+        .card:hover { transform: translateY(-2px); box-shadow: 4px 8px 25px rgba(0,0,0,0.06); }
+        .card-gold { border-left-color: var(--accent-gold); }
+        .card-pink { border-left-color: var(--accent-pink); }
+        
+        /* Flights */
+        .flight-date { font-family: var(--font-heading); font-size: 1rem; font-weight: 600; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
+        .flight-time { font-family: var(--font-mono); font-size: 1.35rem; font-weight: 700; color: var(--text-primary); }
+        .flight-route { font-family: var(--font-body); font-size: 0.9rem; color: var(--text-secondary); }
+        .flight-meta { font-family: var(--font-body); font-size: 0.8rem; color: var(--text-secondary); }
+
+        /* Lists */
+        .category-title { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; margin: 30px 0 15px 0; color: var(--text-primary); border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 8px; }
+        .place-item { display: flex; flex-direction: column; padding: 16px; border: 1px solid rgba(0,0,0,0.05); border-radius: 4px; background: #fff; transition: all 0.2s; height: 100%; }
+        .place-item:hover { border-color: var(--accent-gold); box-shadow: 0 4px 12px rgba(212, 175, 55, 0.1); }
+        .place-name { font-family: var(--font-heading); font-weight: 600; font-size: 1.05rem; color: var(--text-primary); display: flex; justify-content: space-between; align-items: flex-start; }
+        .place-desc { font-size: 0.85rem; color: var(--text-secondary); margin-top: 6px; line-height: 1.5; }
+        
+        .tag { font-size: 0.65rem; text-transform: uppercase; padding: 2px 6px; border-radius: 2px; font-weight: bold; letter-spacing: 0.5px; margin-top: 8px; display: inline-block; }
+        .tag-michelin { background: #fee2e2; color: #991b1b; } 
+        .tag-view { background: #e0f2fe; color: #075985; } 
+        .tag-chain { background: #f3f4f6; color: #4b5563; } 
+        .tag-must { background: #fef08a; color: #854d0e; }
+
+        /* Timeline / Itinerary */
+        .day-header { font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
+        .timeline-container { position: relative; padding-left: 20px; border-left: 1px solid rgba(212, 175, 55, 0.3); margin-top: 10px; }
+        .timeline-item { position: relative; margin-bottom: 24px; }
+        .timeline-item:last-child { margin-bottom: 0; }
+        .timeline-item::before { content: ''; position: absolute; left: -25px; top: 5px; width: 9px; height: 9px; border-radius: 50%; background-color: var(--bg-color); border: 2px solid var(--accent-gold); }
+        .timeline-time { font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 2px; display: block; }
+        .timeline-title { font-family: var(--font-body); font-weight: 700; font-size: 1rem; color: var(--text-primary); }
+        .timeline-desc { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.5; }
+
+        .journal-footer { text-align: center; margin-top: 50px; color: var(--text-secondary); font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.05); padding-bottom: 40px; }
+        .journal-footer a { transition: color 0.3s; }
+        .journal-footer a:hover { color: var(--accent-gold); }
+    </style>
+</head>
+<body>
+
+    <div class="watercolor-bg blob-1"></div>
+    <div class="watercolor-bg blob-2"></div>
+
+    <div class="app-container">
+        <header>
+            <h1 class="main-title">Bangkok Birthday<br>Journey</h1>
+            <p class="sub-title">A Special Celebration</p>
+            <p class="trip-details">NOV 07 — NOV 10 • 3 NIGHTS</p>
+            <div class="divider-line"></div>
+        </header>
+
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="switchTab('logistics')">FLIGHTS & STAYS</button>
+            <button class="tab-btn" onclick="switchTab('itinerary')">ITINERARY</button>
+            <button class="tab-btn" onclick="switchTab('explore')">EXPLORE</button>
+            <button class="tab-btn" onclick="switchTab('food')">FOOD LIST</button>
+        </div>
+
+        <main id="app-content" class="min-h-[400px]">
+            
+            <!-- FLIGHTS & STAYS TAB -->
+            <div id="tab-logistics" class="tab-content">
+                
+                <div class="card card-gold">
+                    <div class="mb-4">
+                        <span class="flight-date"><i class="fas fa-plane-departure mr-2"></i> Outbound • Sat, Nov 07</span>
+                    </div>
+                    <div class="flex items-center gap-4 mb-2">
+                        <div class="flight-time">19:50</div>
+                        <div class="h-[1px] bg-gray-300 flex-1 relative">
+                            <i class="fas fa-plane text-[var(--accent-gold)] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+                        </div>
+                        <div class="flight-time">22:50</div>
+                    </div>
+                    <div class="flex justify-between flight-route mb-3">
+                        <span>Taipei (TPE)</span>
+                        <span>Bangkok (BKK) • Direct (2h 5m)</span>
+                    </div>
+                    <div class="flex justify-between flight-meta border-t border-gray-100 pt-3">
+                        <span>Baggage: 20kg Checked</span>
+                        <span>Flight: Thai Vietjet Air (VZ569)</span>
+                    </div>
+                </div>
+
+                <div class="card card-gold mb-8">
+                    <div class="mb-4">
+                        <span class="flight-date"><i class="fas fa-plane-arrival mr-2"></i> Return • Tue, Nov 10</span>
+                    </div>
+                    <div class="flex items-center gap-4 mb-2">
+                        <div class="flight-time">09:05</div>
+                        <div class="h-[1px] bg-gray-300 flex-1 relative">
+                            <i class="fas fa-plane text-[var(--accent-gold)] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></i>
+                        </div>
+                        <div class="flight-time">13:45</div>
+                    </div>
+                    <div class="flex justify-between flight-route mb-3">
+                        <span>Bangkok (BKK)</span>
+                        <span>Taipei (TPE) • Direct (2h 5m)</span>
+                    </div>
+                    <div class="flex justify-between flight-meta border-t border-gray-100 pt-3">
+                        <span>Baggage: 20kg Checked</span>
+                        <span>Flight: Thai Vietjet Air (VZ568)</span>
+                    </div>
+                </div>
+
+                <h2 class="font-[Cinzel] font-bold text-xl mb-4 text-[var(--text-primary)] tracking-widest uppercase"><i class="fas fa-hotel mr-3 text-[var(--accent-gold)]"></i>Accommodation</h2>
+
+                <div class="card card-gold">
+                    <div class="mb-3 flex justify-between items-center">
+                        <span class="text-xs font-bold bg-[var(--accent-gold)] text-white px-2 py-1 rounded tracking-wide uppercase">Confirmed Booking</span>
+                        <span class="text-xs font-bold text-[var(--accent-gold)]"><i class="fas fa-star"></i> 5 Stars</span>
+                    </div>
+                    
+                    <h3 class="font-[Cinzel] text-xl font-bold text-[var(--accent-pink)] mb-1 uppercase tracking-wider">
+                        <a href="https://maps.app.goo.gl/LK5khVhpctCdVEqC6" target="_blank" class="hover:text-[var(--accent-gold)] transition-colors flex items-center gap-2">
+                            Aira Hotel Bangkok Sukhumvit 11 <i class="fas fa-external-link-alt text-[0.8rem] text-gray-400"></i>
+                        </a>
+                    </h3>
+                    <p class="text-sm text-[var(--text-secondary)] mb-2">14 Soi Sukhumvit 11, Khwaeng Khlong Toei Nuea</p>
+                    
+                    <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[var(--text-secondary)] border-t border-gray-100 pt-3 mt-1">
+                        <div><span class="text-xs uppercase tracking-wider">In:</span> <span class="font-bold text-[var(--text-primary)]">Nov 07 (15:00)</span></div>
+                        <div><span class="text-xs uppercase tracking-wider">Out:</span> <span class="font-bold text-[var(--text-primary)]">Nov 10 (12:00)</span></div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs uppercase tracking-wider">Room:</span> 
+                            <span class="font-bold text-[var(--text-primary)]">Superior King (3 Nights)</span> 
+                            <span class="text-base drop-shadow-sm" title="Surprise awaits!">🎂🎈</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ITINERARY TAB -->
+            <div id="tab-itinerary" class="tab-content hidden">
+                
+                <!-- Day 1 -->
+                <div class="card">
+                    <h3 class="day-header">
+                        <span class="bg-[var(--text-primary)] text-white w-8 h-8 flex justify-center items-center rounded text-sm">D1</span>
+                        Sat, Nov 07 • Arrival & Check-in
+                    </h3>
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <span class="timeline-time">19:50 - 22:50</span>
+                            <span class="timeline-title">Flight to Bangkok</span>
+                            <p class="timeline-desc">Depart on Thai Vietjet Air (VZ569) to Suvarnabhumi Airport (BKK).</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">23:00 - 00:00</span>
+                            <span class="timeline-title">Customs & Baggage</span>
+                            <p class="timeline-desc">Clear immigration and claim checked baggage (20kg).</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">00:00 - 00:45</span>
+                            <span class="timeline-title">Transit to City</span>
+                            <p class="timeline-desc">Take a Grab or Taxi heading to the city center.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">~ 01:00</span>
+                            <span class="timeline-title">Check-in at Aira Hotel</span>
+                            <p class="timeline-desc">Located in the lively Nana area. Grab a quick late-night snack nearby, settle into your room, and rest up for tomorrow's big day!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 2 -->
+                <div class="card card-pink">
+                    <h3 class="day-header">
+                        <span class="bg-[var(--accent-pink)] text-white w-8 h-8 flex justify-center items-center rounded text-sm">D2</span>
+                        Sun, Nov 08 • The Birthday Celebration 🎂
+                    </h3>
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <span class="timeline-time">09:30 - 10:15</span>
+                            <span class="timeline-title">BTS Eastbound</span>
+                            <p class="timeline-desc">Take the BTS from Nana directly to Bang Na station.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">10:30 - 12:00</span>
+                            <span class="timeline-title">Target Practice</span>
+                            <p class="timeline-desc">Live-fire shooting experience at Ratchanawi Bang Na Shooting Range. Kick off the birthday with a bang!</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">12:30 - 14:00</span>
+                            <span class="timeline-title">Premium Wagyu Lunch</span>
+                            <p class="timeline-desc">Take the BTS back to Ekkamai and treat the birthday VIP to top-tier wagyu beef bowls at CHUNN.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">14:15 - 17:00</span>
+                            <span class="timeline-title">Rest & Dress Up</span>
+                            <p class="timeline-desc">Head back to Aira Hotel (Nana). Shower, recharge, and change into your smart casual birthday outfit.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">17:30 - 20:30</span>
+                            <span class="timeline-title">Sunset Birthday Dinner</span>
+                            <p class="timeline-desc">Take the BTS to Ploenchit. Enjoy refined Thai cuisine with cultural performances and stunning sunset city views at Akara Sky Hanuman.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">21:00 - 23:30</span>
+                            <span class="timeline-title">Rooftop Drinks</span>
+                            <p class="timeline-desc">BTS to Thong Lo. Toast to the new year under the iconic color-changing jellyfish tree at Tichuca Rooftop Bar.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">23:45 - 02:00</span>
+                            <span class="timeline-title">F1 Midnight Party</span>
+                            <p class="timeline-desc">BTS to Phrom Phong. Arrive at Raze Arcade (Emsphere 5F) just in time for the midnight lights out of the Brazilian GP!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 3 -->
+                <div class="card card-gold">
+                    <h3 class="day-header">
+                        <span class="bg-[var(--accent-gold)] text-white w-8 h-8 flex justify-center items-center rounded text-sm">D3</span>
+                        Mon, Nov 09 • Culture & City Lights
+                    </h3>
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <span class="timeline-time">10:30 - 11:30</span>
+                            <span class="timeline-title">Morning Coffee</span>
+                            <p class="timeline-desc">Sleep in, then take the BTS to Phaya Thai for champion-level brews at Factory Coffee - BKK.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">11:45 - 13:15</span>
+                            <span class="timeline-title">LV The Place Bangkok</span>
+                            <p class="timeline-desc">BTS to Chit Lom. Explore the immersive Louis Vuitton exhibition at Gaysorn Amarin.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">13:30 - 14:00</span>
+                            <span class="timeline-title">Transit to Old Town</span>
+                            <p class="timeline-desc">Grab a taxi to the riverside. Don't forget to pick up K. Panich Sticky Rice along the way to curb your appetite!</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">14:00 - 16:00</span>
+                            <span class="timeline-title">Wat Arun Thai Dress</span>
+                            <p class="timeline-desc">Rent traditional garments and get your makeup done in the alleyways, then snap premium photos at the stunning white pagoda (Temple of Dawn).</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">16:15 - 17:30</span>
+                            <span class="timeline-title">ICONSIAM & Snacks</span>
+                            <p class="timeline-desc">Take the cross-river ferry. Explore the indoor floating market (SookSiam), and grab After You dessert or ChaTraMue Thai tea.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">18:00 - 18:45</span>
+                            <span class="timeline-title">Transit to Banthat Thong</span>
+                            <p class="timeline-desc">Taxi to the famous food street (Chulalongkorn area).</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">19:00 - 21:00</span>
+                            <span class="timeline-title">Dinner: The Mama Noodle Tactic</span>
+                            <p class="timeline-desc">Grab a queue ticket for Jeh O Chula, eat Nueng Nom Nua toast while waiting, or pivot to Here Duan curry rice if the line is too long!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day 4 -->
+                <div class="card">
+                    <h3 class="day-header">
+                        <span class="bg-gray-400 text-white w-8 h-8 flex justify-center items-center rounded text-sm">D4</span>
+                        Tue, Nov 10 • Departure
+                    </h3>
+                    <div class="timeline-container">
+                        <div class="timeline-item">
+                            <span class="timeline-time">05:30 - 06:15</span>
+                            <span class="timeline-title">Check-out & Airport Transit</span>
+                            <p class="timeline-desc">Early check-out and taxi to BKK Airport. (Tip: Bangkok morning traffic is heavy, depart by 05:30!).</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">06:15 - 08:30</span>
+                            <span class="timeline-title">Check-in & Security</span>
+                            <p class="timeline-desc">Baggage drop and customs clearance.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <span class="timeline-time">09:05 - 13:45</span>
+                            <span class="timeline-title">Flight to Taipei</span>
+                            <p class="timeline-desc">Depart on Thai Vietjet Air (VZ568) and head home safely with great memories.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- EXPLORE TAB -->
+            <div id="tab-explore" class="tab-content hidden">
+                
+                <h2 class="category-title" style="margin-top: 10px;">Cultural Heritage</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/65mTubDhvaWzA54L7" target="_blank" class="place-name hover:text-[var(--accent-gold)]">The Grand Palace <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">The official residence of the Kings of Siam. Breathtaking architecture.</p>
+                        <div><span class="tag tag-must">Iconic Landmark</span></div>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/z2dstdWSWrjM4PkQ9" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Wat Pho <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Famous for the massive Reclining Buddha.</p>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/27vyufCfNYtERE5W6" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Wat Arun <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">The Temple of Dawn. Known for its stunning riverside location and intricate details. Perfect for Thai dress photos.</p>
+                    </div>
+                </div>
+
+                <h2 class="category-title">Modern City & Shopping</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/AGiV2atXuKdbaUCPA" target="_blank" class="place-name hover:text-[var(--accent-gold)]">ICONSIAM <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Massive luxury riverside mall featuring an impressive indoor floating market (SookSiam).</p>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/Krvw5ZVM7yfNt4fb7" target="_blank" class="place-name hover:text-[var(--accent-gold)]">EmQuartier <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Luxury shopping complex in Sukhumvit with a stunning indoor waterfall.</p>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/wyCy8ZUFrzY4TkSK9" target="_blank" class="place-name hover:text-[var(--accent-gold)]">King Power Mahanakhon <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Thailand's highest observation deck offering 360-degree panoramic city views and a glass floor.</p>
+                        <div><span class="tag tag-view">City View</span></div>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/K95iQ6PXJ6T9aseu8" target="_blank" class="place-name hover:text-[var(--accent-gold)]">LV The Place Bangkok <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Immersive Louis Vuitton destination at Gaysorn Amarin.</p>
+                    </div>
+                </div>
+
+                <h2 class="category-title">Activities & Leisure</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/QnVQfiiqrPQysYgXA" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Raze Arcade <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">High-end entertainment hub with state-of-the-art racing simulators. F1 viewing venue.</p>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/F5j3kJEccUbKYZK29" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Ratchanawi Bang Na Shooting Range <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Professional indoor shooting range offering real firearm experiences.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOD LIST TAB -->
+            <div id="tab-food" class="tab-content hidden">
+                
+                <h2 class="category-title" style="margin-top: 10px;">Rooftop Bars & Premium Views</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/wJ5JTUjCf6o6VJEh7" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Tichuca Rooftop Bar <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Iconic jungle-themed rooftop famous for its massive, color-changing LED jellyfish tree installation.</p>
+                        <div><span class="tag tag-view">Vibe & View</span></div>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/NhuVyX5s6PqzHVri7" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Le Du Kaan <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Elevated modern Thai dining by a Michelin-starred chef, located at the top of Empire Tower.</p>
+                        <div><span class="tag tag-view">Dining with a View</span></div>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/EK1dNFTEmEiZ682W7" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Akara Sky Hanuman <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">A unique rooftop bar blending spectacular city views with traditional Thai cultural performances.</p>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/AH7GsVz7uVmDqYv39" target="_blank" class="place-name hover:text-[var(--accent-gold)]">TRIBE Sky Beach Club <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">A tropical oasis above the city featuring a pool, vibrant atmosphere, and great cocktails.</p>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/QjDe5mtVjaSdV6GJA" target="_blank" class="place-name hover:text-[var(--accent-gold)]">TYME Rooftop <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">A more relaxed, stylish rooftop space perfect for evening drinks and conversation.</p>
+                    </div>
+                </div>
+
+                <h2 class="category-title">Michelin & Local Legends</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/mjkwS1bZAC1Uzyhm8" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Jeh O Chula <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Legendary late-night spot famous for their loaded Tom Yum Mama noodles.</p>
+                        <div><span class="tag tag-michelin">Bib Gourmand</span></div>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/oekVBsSGwTzxpMn27" target="_blank" class="place-name hover:text-[var(--accent-gold)]">K. Panich Sticky Rice <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Serving traditional, perfectly crafted mango sticky rice for over 90 years in the Old Town.</p>
+                        <div><span class="tag tag-michelin">Bib Gourmand</span></div>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/JaNdZ3ntbVadjNcA9" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Thipsamai Padthai <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Often hailed as the best Pad Thai in Bangkok, wrapped in a thin egg omelet.</p>
+                        <div><span class="tag tag-michelin">Bib Gourmand</span></div>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/vcN2L5kLVt682qUJ7" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Phed Mark <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Co-founded by famous food YouTuber Mark Wiens. Specializes in intense, authentic Pad Krapow (Holy Basil Stir-fry).</p>
+                        <div><span class="tag tag-must">Must Try</span></div>
+                    </div>
+                </div>
+
+                <h2 class="category-title">Casual Eats & Seafood</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/qr39ZTpVJgA3K1g17" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Mae Varee <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Legendary Mango Sticky Rice stall in Thong Lo, open all day providing the sweetest mangoes.</p>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/ckSNvT8nkQ6usjZSA" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Here Duan <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">A local favorite for Khao Rad Gaeng (curry over rice) located in the bustling Banthat Thong food street.</p>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/gcSJmLrHATZhRaju8" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Som Som Seafood <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">No-frills, authentic local spot serving fresh and spicy Thai seafood dishes.</p>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/hXAKCiUNBLVotAGm6" target="_blank" class="place-name hover:text-[var(--accent-gold)]">CHUNN <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Cozy eatery specializing in premium beef rice bowls and perfectly grilled meats.</p>
+                    </div>
+                </div>
+
+                <h2 class="category-title">Cafés & Desserts</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/BSzsqB14M1VuPnKM8" target="_blank" class="place-name hover:text-[var(--accent-gold)]">% Arabica (Empire Tower) <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">The highest café in Bangkok, offering excellent minimalist coffee with sweeping city views.</p>
+                        <div><span class="tag tag-view">High Altitude Café</span></div>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/q4V95aEQ8qhLAWoEA" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Factory Coffee - BKK <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Award-winning specialty coffee shop known for creative signature drinks.</p>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/6ihDxmdC2gmMHPyC6" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Mont NomSod <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">An institution since 1964, serving thick, fluffy toast with sweet custards and fresh milk.</p>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/BwKkkRWsmwW9zPVMA" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Nueng Nom Nua <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Highly popular dessert spot in Banthat Thong, famous for rich Hokkaido milk and toasted bread.</p>
+                    </div>
+                </div>
+
+                <h2 class="category-title">Must-Try Chains (Any Branch)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/nqboUCqkY19mQ4Lw9" target="_blank" class="place-name hover:text-[var(--accent-gold)]">After You Dessert Cafe <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Famous for their incredibly soft Kakigori (Japanese shaved ice) with Thai flavors.</p>
+                        <div><span class="tag tag-chain">Multiple Locations</span></div>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/pji7t9hFjHuthhCQA" target="_blank" class="place-name hover:text-[var(--accent-gold)]">Thong Smith <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">Elevated Boat Noodles with rich, dark broth and premium cuts of wagyu beef.</p>
+                        <div><span class="tag tag-chain">Multiple Locations</span></div>
+                    </div>
+                    <div class="place-item">
+                        <a href="https://maps.app.goo.gl/CNzbQzpHtPwFE4PB8" target="_blank" class="place-name hover:text-[var(--accent-gold)]">ChaTraMue <i class="fas fa-map-marker-alt text-gray-300"></i></a>
+                        <p class="place-desc">The original and most iconic Thai Iced Tea brand. Perfect grab-and-go drink.</p>
+                        <div><span class="tag tag-chain">Available Everywhere</span></div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+        <footer class="journal-footer">
+            <p>Designed & Planned by <a href="https://www.instagram.com/thechrisxc/" target="_blank" class="font-bold text-[var(--text-primary)] tracking-widest uppercase">Chris (thechrisxc)</a></p>
+        </footer>
+    </div>
+
+    <script>
+        console.log('%c Bangkok Itinerary Curated by Chris ', 'background: #D4AF37; color: #fff; border-radius: 2px; padding: 6px 12px; font-family: sans-serif; font-weight: bold; font-size: 14px;');
+
+        function switchTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            // Remove active state from all buttons
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            // Add active state to clicked button
+            const activeBtn = document.querySelector(`.tab-btn[onclick="switchTab('${tabId}')"]`);
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+    </script>
+</body>
+</html>
